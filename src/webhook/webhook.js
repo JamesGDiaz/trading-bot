@@ -11,8 +11,8 @@ moment().format()
 action.webhook = (req, res) => {
   log.debug('webhook route requested')
   log.debug(req.body.test)
-  res.send(req.body)
   res.status(200).end()
 }
 
 module.exports = action
+
