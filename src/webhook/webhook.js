@@ -10,8 +10,8 @@ moment().format()
  */
 action.webhook = (req, res) => {
   log.debug('webhook route requested')
-  log.debug(req)
-  log.debug(JSON.stringify(req))
+  log.debug(req.params)
+  log.debug(JSON.stringify(req.params))
   res.status(200).end()
 }
 
