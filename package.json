@@ -53,6 +53,7 @@
     "passport-local-mongoose": "^5.0.1",
     "passport.socketio": "^3.7.0",
     "path": "^0.12.7",
+    "python-shell": "^2.0.0",
     "rate-limit-redis": "^1.7.0",
     "redis": "^2.8.0",
     "request": "^2.88.2",
