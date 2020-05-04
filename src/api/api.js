@@ -1,6 +1,6 @@
 const { log } = require('../config')
 const { PythonShell } = require('python-shell')
-// const request = require('request')
+const request = require('request')
 // const config = require('../config/').config
 const api = {}
 
@@ -13,10 +13,19 @@ const restClientCall = async (command, args = []) => {
   }
   return new Promise(resolve => {
     PythonShell.run('./src/api/rest_client.py', options, function (err, results) {
-      if (err) log.error(err)
-      // results is an array consisting of messages collected during execution
-      console.log('Results : %j', results)
-      resolve(results)
+      if (err) {
+        log.error(err)
+        resolve(err)
+      } else {
+        // results is an array consisting of messages collected during execution
+        log.debug(results[0])
+        resolve(JSON.parse(
+          results[0].replace(/'/g, '"')
+            .split('True').join('true')
+            .split('False').join('false')
+            .split('None').join('null')
+        ))
+      }
     })
   })
 }
@@ -26,7 +35,15 @@ const restClientCall = async (command, args = []) => {
  */
 api.ping = async (req, res, next) => {
   log.verbose('/api/ping requested')
-  res.json({ status: 'pong' })
+  var options = {
+    method: 'GET',
+    url: 'http://127.0.0.1:8080/api/v1/ping'
+  }
+  request(options, function (error, response) {
+    if (error) throw new Error(error)
+    log.debug(response.body)
+    res.send(response.body)
+  })
 }
 /**
  * balance
@@ -42,39 +59,36 @@ api.balance = async (req, res, next) => {
  * Show the current blacklist.
  * :param add: List of coins to add (example: "BNB/BTC")
  */
-api.blacklist = (req, res, next) => {
+api.blacklist = async (req, res, next) => {
   log.verbose('/api/blacklist requested')
-  res.status(200).end()
+  res.send(await restClientCall('blacklist'))
 }
 
 /**
  * count
  * Return the amount of open trades.
  */
-api.count = (req, res, next) => {
+api.count = async (req, res, next) => {
   log.verbose('/api/count requested')
-  restClientCall('count')
-  res.status(200).end()
+  res.send(await restClientCall('count'))
 }
 
 /**
  * daily
  * Return the amount of open trades.
  */
-api.daily = (req, res, next) => {
+api.daily = async (req, res, next) => {
   log.verbose('/api/daily requested')
-  restClientCall('daily')
-  res.status(200).end()
+  res.send(await restClientCall('daily'))
 }
 
 /**
  * edge
  * Return information about edge.
  */
-api.edge = (req, res, next) => {
+api.edge = async (req, res, next) => {
   log.verbose('/api/edge requested')
-  restClientCall('edge')
-  res.status(200).end()
+  res.send(await restClientCall('edge'))
 }
 
 /**
@@ -83,10 +97,9 @@ api.edge = (req, res, next) => {
  * :param pair: Pair to buy (ETH/BTC)
  * :param price: Optional - price to buy
  */
-api.forcebuy = (req, res, next) => {
+api.forcebuy = async (req, res, next) => {
   log.verbose('/api/forcebuy requested')
-  restClientCall('forcebuy')
-  res.status(200).end()
+  res.send(await restClientCall('forcebuy'))
 }
 
 /**
@@ -95,90 +108,81 @@ api.forcebuy = (req, res, next) => {
 
         :param tradeid: Id of the trade (can be received via status command)
  */
-api.forcesell = (req, res, next) => {
+api.forcesell = async (req, res, next) => {
   log.verbose('/api/forcesell requested')
-  restClientCall('forcesell')
-  res.status(200).end()
+  res.send(await restClientCall('forcesell'))
 }
 
 /**
  * performance
  * Return the performance of the different coins.
  */
-api.performance = (req, res, next) => {
+api.performance = async (req, res, next) => {
   log.verbose('/api/performance requested')
-  restClientCall('performance')
-  res.status(200).end()
+  res.send(await restClientCall('performance'))
 }
 
 /**
  * profit
  * Return the profit summary.
  */
-api.profit = (req, res, next) => {
+api.profit = async (req, res, next) => {
   log.verbose('/api/profit requested')
-  restClientCall('profit')
-  res.status(200).end()
+  res.send(await restClientCall('profit'))
 }
 
 /**
  * reload_conf
  * Reload configuration.
  */
-api.reload_conf = (req, res, next) => {
+api.reload_conf = async (req, res, next) => {
   log.verbose('/api/reload_conf requested')
-  restClientCall('reload_conf')
-  res.status(200).end()
+  res.send(await restClientCall('reload_conf'))
 }
 
 /**
  * show_config
  * Returns part of the configuration, relevant for trading operations.
  */
-api.show_config = (req, res, next) => {
+api.show_config = async (req, res, next) => {
   log.verbose('/api/show_config requested')
-  restClientCall('show_config')
-  res.status(200).end()
+  res.send(await restClientCall('show_config'))
 }
 
 /**
  * start
  * Start the bot if it's in the stopped state.
  */
-api.start = (req, res, next) => {
+api.start = async (req, res, next) => {
   log.verbose('/api/start requested')
-  restClientCall('start')
-  res.status(200).end()
+  res.send(await restClientCall('start'))
 }
 
 /**
  * status
  * Get the status of open trades.
  */
-api.status = (req, res, next) => {
+api.status = async (req, res, next) => {
   log.verbose('/api/status requested')
-  restClientCall('status')
-  res.status(200).end()
+  res.send(await restClientCall('status'))
 }
 
 /**
  * stop
  * Stop the bot. Use 'start' to restart.
  */
-api.stop = (req, res, next) => {
+api.stop = async (req, res, next) => {
   log.verbose('/api/stop requested')
-  restClientCall('stop')
-  res.status(200).end()
+  res.send(await restClientCall('stop'))
 }
 
 /**
  * stopbuy
  * Stop buying (but handle sells gracefully). Use 'reload_conf' to reset.
  */
-api.stopbuy = (req, res, next) => {
+api.stopbuy = async (req, res, next) => {
   log.verbose('/api/stopbuy requested')
-  restClientCall('stopbuy')
-  res.status(200).end()
+  res.send(await restClientCall('stopbuy'))
 }
 
 /**
@@ -187,30 +191,27 @@ api.stopbuy = (req, res, next) => {
  * Return trades history.
  * :param limit: Limits trades to the X last trades. No limit to get all the trades.
  */
-api.trades = (req, res, next) => {
+api.trades = async (req, res, next) => {
   log.verbose('/api/trades requested')
-  restClientCall('trades')
-  res.status(200).end()
+  res.send(await restClientCall('trades'))
 }
 
 /**
  * version
  * Return the version of the bot.
  */
-api.version = (req, res, next) => {
+api.version = async (req, res, next) => {
   log.verbose('/api/version requested')
-  restClientCall('version')
-  res.status(200).end()
+  res.send(await await restClientCall('version'))
 }
 
 /**
  * whitelist
  * Show the current whitelist.
  */
-api.whitelist = (req, res, next) => {
+api.whitelist = async (req, res, next) => {
   log.verbose('/api/whitelist requested')
-  restClientCall('whitelist')
-  res.status(200).end()
+  res.send(await restClientCall('whitelist'))
 }
 
 module.exports = api

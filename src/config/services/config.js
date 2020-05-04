@@ -24,7 +24,8 @@ const test = {
   port: process.env.PORT,
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
-  emailPassword: process.env.EMAIL_PASS
+  emailPassword: process.env.EMAIL_PASS,
+  xToken: process.env.XTOKEN
 }
 
 /**
@@ -36,7 +37,8 @@ const development = {
   port: process.env.PORT,
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
-  emailPassword: process.env.EMAIL_PASS
+  emailPassword: process.env.EMAIL_PASS,
+  xToken: process.env.XTOKEN
 }
 /**
  * Production config
@@ -47,7 +49,8 @@ const production = {
   port: process.env.PORT,
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
-  emailPassword: process.env.EMAIL_PASS
+  emailPassword: process.env.EMAIL_PASS,
+  xToken: process.env.XTOKEN
 }
 
 const config = {
