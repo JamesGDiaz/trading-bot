@@ -2,10 +2,10 @@
 
 const {
   listen,
-  close
+  close,
 } = require('./server')
 
 module.exports = {
   listen,
-  close
+  close,
 }

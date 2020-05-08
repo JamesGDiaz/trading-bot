@@ -3,6 +3,7 @@
 const apiRoute = require('./api')
 const errorRoute = require('./error')
 const webhookRoute = require('./webhook')
+const userRoute = require('./user')
 const middlewares = require('../src/middlewares')
 
 const verifyToken = middlewares.verifyToken
@@ -10,9 +11,10 @@ const verifyToken = middlewares.verifyToken
 /**
  * Initialize routes
  */
-const init = app => {
+const init = (app) => {
   app.use('/api', verifyToken, apiRoute)
   app.use('/webhook', webhookRoute)
+  app.use('/user', userRoute)
   app.use('*', errorRoute)
   app.get('/', (req, res, next) => {
     res.send('Server OK<br>What were you looking for?')
@@ -20,5 +22,5 @@ const init = app => {
 }
 
 module.exports = {
-  init
+  init,
 }

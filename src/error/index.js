@@ -1,7 +1,7 @@
 'use strict'
 
-const { handle } = require('./error')
+const { handle, } = require('./error')
 
 module.exports = {
-  handle
+  handle,
 }

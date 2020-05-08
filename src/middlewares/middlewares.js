@@ -1,4 +1,4 @@
-const { config, log } = require('../config')
+const { config, log, } = require('../config')
 const middlewares = {}
 
 middlewares.verifyToken = (req, res, next) => {

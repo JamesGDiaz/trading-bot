@@ -5,7 +5,7 @@ const {
   express,
   log,
   stats,
-  redis
+  redis,
 } = require('../config')
 const routes = require('../../routes')
 // const mongoose = require('mongoose')
@@ -38,5 +38,5 @@ const close = () => {
 
 module.exports = {
   listen,
-  close
+  close,
 }

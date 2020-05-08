@@ -1,4 +1,4 @@
-const { redisClient } = require('../../redis')
+const { redisClient, } = require('../../redis')
 const log = require('./logging')
 
 /**
@@ -13,5 +13,5 @@ const init = () => {
 }
 
 module.exports = {
-  init
+  init,
 }

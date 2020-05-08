@@ -13,5 +13,5 @@ module.exports = {
   log,
   smtpTransport,
   stats,
-  redis
+  redis,
 }

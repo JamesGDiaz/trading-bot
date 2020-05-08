@@ -1,7 +1,7 @@
 'use strict'
 
 const expect = require('chai').expect
-const { mail } = require('./index')
+const { mail, } = require('./index')
 
 describe('Common - Email', () => {
   it('should get mail object', () => {

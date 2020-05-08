@@ -1,5 +1,5 @@
-const { log } = require('../config')
-const { PythonShell } = require('python-shell')
+const { log, } = require('../config')
+const { PythonShell, } = require('python-shell')
 const request = require('request')
 // const config = require('../config/').config
 const api = {}
@@ -8,8 +8,8 @@ const restClientCall = async (command, args = []) => {
   const options = {
     mode: 'text',
     pythonPath: '/usr/bin/python3',
-    pythonOptions: ['-u'], // get print results in real-time
-    args: [command, ...args]
+    pythonOptions: ['-u', ], // get print results in real-time
+    args: [command, ...args, ],
   }
   return new Promise(resolve => {
     PythonShell.run('./src/api/rest_client.py', options, function (err, results) {
@@ -37,7 +37,7 @@ api.ping = async (req, res, next) => {
   log.verbose('/api/ping requested')
   var options = {
     method: 'GET',
-    url: 'http://127.0.0.1:8080/api/v1/ping'
+    url: 'http://127.0.0.1:8080/api/v1/ping',
   }
   request(options, function (error, response) {
     if (error) throw new Error(error)

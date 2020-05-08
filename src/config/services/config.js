@@ -9,7 +9,7 @@ if (env === 'production') {
 }
 const envPath = path.join(basePath, `.env/${env}.config.env`)
 const envConfig = require('dotenv').config({
-  path: envPath
+  path: envPath,
 })
 if (envConfig.error) {
   throw envConfig.error
@@ -25,7 +25,7 @@ const test = {
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASS,
-  xToken: process.env.XTOKEN
+  xToken: process.env.XTOKEN,
 }
 
 /**
@@ -38,7 +38,7 @@ const development = {
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASS,
-  xToken: process.env.XTOKEN
+  xToken: process.env.XTOKEN,
 }
 /**
  * Production config
@@ -50,13 +50,13 @@ const production = {
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASS,
-  xToken: process.env.XTOKEN
+  xToken: process.env.XTOKEN,
 }
 
 const config = {
   test,
   development,
-  production
+  production,
 }
 
 module.exports = config[env]

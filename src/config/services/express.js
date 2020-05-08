@@ -7,7 +7,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 
 const corsOptions = {
-  credentials: true
+  credentials: true,
 }
 /**
  * Express configuration
@@ -17,12 +17,12 @@ const init = () => {
   const app = express()
   app.use(helmet())
   app.use(cors(corsOptions))
-  app.use(bodyParser.urlencoded({ extended: true }))
+  app.use(bodyParser.urlencoded({ extended: true, }))
   app.use(bodyParser.json())
   // app.use(cookieParser())
   return app
 }
 
 module.exports = {
-  init
+  init,
 }

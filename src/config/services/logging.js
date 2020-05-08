@@ -12,7 +12,7 @@ const log = winston.createLogger({
 
   format: winston.format.combine(
     winston.format.timestamp({
-      format: 'DD-MM-YYYY HH:mm:ss'
+      format: 'DD-MM-YYYY HH:mm:ss',
     }),
     winston.format.colorize(),
     winston.format.printf(
@@ -22,12 +22,12 @@ const log = winston.createLogger({
   transports: [
     new winston.transports.File({
       filename: 'error.log',
-      level: 'error'
+      level: 'error',
     }),
     new winston.transports.File({
-      filename: 'combined.log'
-    })
-  ]
+      filename: 'combined.log',
+    }),
+  ],
 })
 
 if (process.env.NODE_ENV !== 'test') {
@@ -35,7 +35,7 @@ if (process.env.NODE_ENV !== 'test') {
     new winston.transports.Console({
       format: winston.format.printf(
         info => `${info.timestamp} ${info.level}: ${info.message}`
-      )
+      ),
     })
   )
 }

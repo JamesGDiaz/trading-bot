@@ -1,6 +1,6 @@
 'use strict'
 
-const { config, smtpTransport } = require('../../config')
+const { config, smtpTransport, } = require('../../config')
 
 /**
  * Send email
@@ -15,7 +15,7 @@ const send = (settings, callback) => {
     from: `<${config.emailAddress}>`,
     to: settings.to,
     subject: settings.subject,
-    html: settings.content
+    html: settings.content,
   }
   smtpTransport.sendMail(mailOptions, (err, response) => {
     // smtpTransport.close()
@@ -28,5 +28,5 @@ const send = (settings, callback) => {
 }
 
 module.exports = {
-  send
+  send,
 }

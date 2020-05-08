@@ -11,8 +11,8 @@ const smtpTransport = nodemailer.createTransport(nodemailerSmtpTransport({
   service: 'gmail',
   auth: {
     user: config.emailAddress,
-    pass: config.emailPassword
-  }
+    pass: config.emailPassword,
+  },
 }))
 
 module.exports = smtpTransport

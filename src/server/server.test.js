@@ -5,7 +5,7 @@ process.env.NODE_ENV = 'test'
 const expect = require('chai').expect
 const http = require('http')
 const assert = require('assert')
-const { config } = require('../config')
+const { config, } = require('../config')
 const server = require('./server')
 
 describe('Server', () => {

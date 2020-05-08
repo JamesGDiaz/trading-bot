@@ -2,13 +2,8 @@
 
 const express = require('express')
 const router = express.Router()
-const { webhook } = require('../src/webhook')
+const { webhook, } = require('../src/webhook')
 
-/* router.post('/webhookbuy', webhookbuy)
-router.post('/webhookbuycancel', webhookbuycancel)
-router.post('/webhooksell', webhooksell)
-router.post('/webhooksellcancel', webhooksellcancel)
-router.post('/webhookstatus', webhookstatus) */
-router.all('/', webhook)
+router.post('/', webhook)
 
 module.exports = router
