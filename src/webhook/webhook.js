@@ -6,8 +6,8 @@ moment().format()
 
 const webhook = (req, res) => {
   log.debug('webhook route requested')
-  log.debug(req.params)
-  log.debug(JSON.stringify(req.params))
+  log.debug(req.body)
+  log.debug(JSON.stringify(req.body))
   res.status(200).end()
 }
 
