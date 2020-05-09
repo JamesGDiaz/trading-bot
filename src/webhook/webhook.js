@@ -28,18 +28,18 @@ const sendNotification = async (messageType, value2 = {}) => {
       log.error('Error while searching database for pushTokens')
     } else {
       // log.verbose(`Token List: ${pushTokenList}`)
-      const out = {}
+      let out = {}
       switch (messageType) {
       case 'status':
-        statusNotifcationBuilder(value2)
+        out = statusNotifcationBuilder(value2)
         break
       case 'buy':
       case 'buycancel':
-        buyNotificationBuilder(value2)
+        out = buyNotificationBuilder(value2)
         break
       case 'sell':
       case 'sellcancel':
-        sellNotificationBuilder(value2)
+        out = sellNotificationBuilder(value2)
         break
 
       default:
@@ -64,12 +64,11 @@ const statusNotifcationBuilder = (value2) => {
     return { title: 'Status: running', message: 'The bot is started', }
   }
   if (value2.includes('*Exchange')) {
-    return { title: 'Configuration', message: value2, }
+    return { title: 'Configuration:', message: value2, }
   }
   if (value2 === 'process died') {
     return { title: 'ALERT', message: 'Process Died', }
   }
-
   return null
 }
 const buyNotificationBuilder = (messageType, value2) => {
