@@ -74,6 +74,12 @@ const statusNotifcationBuilder = (value2) => {
 const buyNotificationBuilder = (messageType, value2) => {
   log.debug(messageType)
   log.debug(value2)
+  try {
+    JSON.parse(value2)
+  } catch (error) {
+    log.error(error)
+    return
+  }
   const payload = JSON.parse(value2)
   return {
     title: `${messageType.toUpperCase()} ${payload.pair} at ${
@@ -90,6 +96,12 @@ const buyNotificationBuilder = (messageType, value2) => {
 const sellNotificationBuilder = (messageType, value2) => {
   log.debug(messageType)
   log.debug(value2)
+  try {
+    JSON.parse(value2)
+  } catch (error) {
+    log.error(error)
+    return
+  }
   const payload = JSON.parse(value2)
   return {
     title: `${messageType.toUpperCase()} ${payload.pair}. ${payload.gain} ${
