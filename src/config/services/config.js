@@ -3,7 +3,6 @@
 const path = require('path')
 let basePath = path.join(__dirname, '../../../')
 const env = process.env.NODE_ENV
-
 if (env === 'production') {
   basePath = './'
 }

@@ -28,7 +28,7 @@ action.setPushToken = (req, res) => {
  */
 action.removePushToken = (req, res) => {
   log.verbose('Removing push token...')
-  removePushToken(req.token.value, (err) => {
+  removePushToken(req.body.token.value, (err) => {
     if (err) {
       log.verbose('There was en error while updating the redis server')
       return res.json({

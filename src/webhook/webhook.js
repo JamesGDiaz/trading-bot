@@ -20,26 +20,86 @@ const webhook = (req, res) => {
  */
 
 const sendNotification = async (messageType, value2 = {}) => {
+  log.verbose(
+    `${messageType}: ${messageType === 'status' ? value2 : JSON.parse(value2)}`
+  )
   redisClient.smembers('pushTokens', (err, pushTokenList) => {
     if (err) {
       log.error('Error while searching database for pushTokens')
     } else {
-      log.debug(`Token List: ${pushTokenList}`)
+      // log.verbose(`Token List: ${pushTokenList}`)
       const out = {}
-      console.log(`messageType: ${messageType}`)
-      if (messageType === 'status') {
-        out.title = 'status notification'
-        out.message = 'status notification'
-      } else {
-        out.title = 'status notification'
-        out.message = 'other type'
+      switch (messageType) {
+      case 'status':
+        statusNotifcationBuilder(value2)
+        break
+      case 'buy':
+      case 'buycancel':
+        buyNotificationBuilder(value2)
+        break
+      case 'sell':
+      case 'sellcancel':
+        sellNotificationBuilder(value2)
+        break
+
+      default:
+        break
       }
-      console.log(JSON.stringify(out))
       // Only send push notifications while in production
       // if (process.env.NODE_ENV === 'production') { broadcastPushNotification(pushTokens, out.type, out.message) }
-      broadcastPushNotification(pushTokenList, out.type, out.message) // comment this when publishing!
+      if (out) {
+        broadcastPushNotification(
+          pushTokenList,
+          out.title,
+          out.message,
+          out.data
+        )
+      }
     }
   })
 }
 
+const statusNotifcationBuilder = (value2) => {
+  if (value2 === 'running') {
+    return { title: 'Status: running', message: 'The bot is started', }
+  }
+  if (value2.includes('*Exchange')) {
+    return { title: 'Configuration', message: value2, }
+  }
+  if (value2 === 'process died') {
+    return { title: 'ALERT', message: 'Process Died', }
+  }
+
+  return null
+}
+const buyNotificationBuilder = (messageType, value2) => {
+  const payload = JSON.parse(value2)
+  return {
+    title: `${messageType.toUpperCase()} ${payload.pair} at ${
+      payload.current_rate
+    }`,
+    message:
+      `Amount: ${payload.amount}\n` +
+      `Open date: ${payload.open_date}\n` +
+      `Limit: ${payload.limit}` +
+      `Stake: ${payload.stake_amount}${payload.stake_currency}` +
+      `Order type: ${payload.order_type}`,
+  }
+}
+const sellNotificationBuilder = (messageType, value2) => {
+  const payload = JSON.parse(value2)
+  return {
+    title: `${messageType.toUpperCase()} ${payload.pair}. ${payload.gain} ${
+      payload.profit_amount
+    } (${payload.profit_ratio})`,
+    message:
+      `Amount: ${payload.amount}\n` +
+      `Sell reason: ${payload.sell_reason}\n` +
+      `Close date: ${payload.close_date}\n` +
+      `Open date: ${payload.open_date}\n` +
+      `Limit: ${payload.limit}` +
+      `Stake: ${payload.stake_amount}${payload.stake_currency}` +
+      `Order type: ${payload.order_type}`,
+  }
+}
 module.exports = { webhook, }

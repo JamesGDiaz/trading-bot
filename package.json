@@ -6,9 +6,8 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint ./routes ./src ./app.js --fix",
     "test": "export NODE_ENV=test&& mocha --exit --reporter spec \"src/*/*.test.js\"",
-    "dev": "export NODE_ENV=development&& nodemon app.js -L --exec \"npm run test && npm run lint && node\"",
-    "build": "export NODE_ENV=production&& webpack --config webpack.config.js --mode production",
-    "start": "pm2-runtime start app.js -i max",
+    "dev": "export NODE_ENV=development && nodemon app.js -L --exec \"npm run test && npm run lint && node\"",
+    "start": "export NODE_ENV=production && pm2-runtime start app.js -i max",
     "stop": "pm2 stop all",
     "delete": "pm2 delete app"
   },
@@ -29,10 +28,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
-    "bcryptjs": "^2.4.3",
     "body-parser": "^1.19.0",
-    "connect-mongo": "^3.2.0",
-    "connect-redis": "^4.0.4",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
@@ -44,23 +40,14 @@
     "helmet": "^3.22.0",
     "http": "0.0.0",
     "moment": "^2.25.1",
-    "mongoose": "^5.9.11",
-    "mongoose-moment": "^0.1.3",
     "nodemailer": "^6.4.6",
     "nodemailer-smtp-transport": "^2.7.4",
-    "passport": "^0.4.1",
-    "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0",
-    "passport-local-mongoose": "^5.0.1",
-    "passport.socketio": "^3.7.0",
     "path": "^0.12.7",
     "python-shell": "^2.0.0",
     "rate-limit-redis": "^1.7.0",
     "redis": "^2.8.0",
     "request": "^2.88.2",
     "url-parse": "^1.4.7",
-    "validator": "^12.2.0",
-    "webpack-node-externals": "^1.7.2",
     "winston": "3.2.1"
   }
 }

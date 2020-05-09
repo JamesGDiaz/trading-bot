@@ -14,7 +14,7 @@ const verifyToken = middlewares.verifyToken
 const init = (app) => {
   app.use('/api', verifyToken, apiRoute)
   app.use('/webhook', webhookRoute)
-  app.use('/user', userRoute)
+  app.use('/user', verifyToken, userRoute)
   app.use('*', errorRoute)
   app.get('/', (req, res, next) => {
     res.send('Server OK<br>What were you looking for?')
