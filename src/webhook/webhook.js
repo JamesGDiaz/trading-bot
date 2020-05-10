@@ -9,25 +9,16 @@ moment().format()
 
 const webhook = (req, res) => {
   log.debug('webhook route requested')
-  // log.debug(JSON.stringify(req.body, 2))
   const messageType = JSON.parse(req.body.value1).messageType
   sendNotification(messageType, req.body.value2)
   res.status(200).end()
 }
 
-/**
- * {"value1":"{\"messageType\":\"status\"}","value2":"*Exchange:* `binance`\n*Stake per trade:* `15 USDT`\n*Minimum ROI:* `{'0': 0.15965, '36': 0.05506, '79': 0.03882, '180': 0}`\n*Trailing Stoploss:* `-0.25`\n*Ticker Interval:* `5m`\n*Strategy:* `Ichis360D_Hyper2`","value3":""}
- */
-
 const sendNotification = async (messageType, value2 = {}) => {
-  log.verbose(
-    `${messageType}: ${messageType === 'status' ? value2 : JSON.parse(value2)}`
-  )
   redisClient.smembers('pushTokens', (err, pushTokenList) => {
     if (err) {
       log.error('Error while searching database for pushTokens')
     } else {
-      // log.verbose(`Token List: ${pushTokenList}`)
       let out = {}
       switch (messageType) {
       case 'status':
@@ -35,11 +26,11 @@ const sendNotification = async (messageType, value2 = {}) => {
         break
       case 'buy':
       case 'buycancel':
-        out = buyNotificationBuilder(value2)
+        out = buyNotificationBuilder(messageType, value2)
         break
       case 'sell':
       case 'sellcancel':
-        out = sellNotificationBuilder(value2)
+        out = sellNotificationBuilder(messageType, value2)
         break
 
       default:
@@ -82,15 +73,12 @@ const buyNotificationBuilder = (messageType, value2) => {
   }
   const payload = JSON.parse(value2)
   return {
-    title: `${messageType.toUpperCase()} ${payload.pair} at ${
+    title: `${messageType.toUpperCase()} ${payload.pair} at ${Number(
       payload.current_rate
-    }`,
+    ).toFixed(5)}`,
     message:
-      `Amount: ${payload.amount}\n` +
-      `Open date: ${payload.open_date}\n` +
-      `Limit: ${payload.limit}` +
-      `Stake: ${payload.stake_amount}${payload.stake_currency}` +
-      `Order type: ${payload.order_type}`,
+      `Amount: ${Number(payload.amount).toFixed(6)}\n` +
+      `Order: ${Number(payload.limit).toFixed(6)} ${payload.order_type}\n`,
   }
 }
 const sellNotificationBuilder = (messageType, value2) => {
@@ -104,17 +92,19 @@ const sellNotificationBuilder = (messageType, value2) => {
   }
   const payload = JSON.parse(value2)
   return {
-    title: `${messageType.toUpperCase()} ${payload.pair}. ${payload.gain} ${
-      payload.profit_amount
-    } (${payload.profit_ratio})`,
+    title: `${messageType.toUpperCase()} ${payload.pair} ${
+      payload.profit_amount > 0 ? '+' : '-'
+    }`,
     message:
-      `Amount: ${payload.amount}\n` +
+      `${payload.gain}: ${Number(payload.profit_ratio).toFixed(2)}% (${Number(
+        payload.profit_amount
+      ).toFixed(2)})\n` +
       `Sell reason: ${payload.sell_reason}\n` +
-      `Close date: ${payload.close_date}\n` +
-      `Open date: ${payload.open_date}\n` +
-      `Limit: ${payload.limit}` +
-      `Stake: ${payload.stake_amount}${payload.stake_currency}` +
-      `Order type: ${payload.order_type}`,
+      `Order: ${payload.limit} ${payload.order_type}\n` +
+      `Open date: ${moment
+        .utc(payload.open_date)
+        .utcOffset('-05:00')
+        .format('D/MMM/YY H:m:s')}\n`,
   }
 }
 module.exports = { webhook, }

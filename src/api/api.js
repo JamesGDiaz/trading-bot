@@ -5,6 +5,7 @@ const request = require('request')
 const api = {}
 
 const restClientCall = async (command, args = []) => {
+  console.log(args)
   const options = {
     mode: 'text',
     pythonPath: '/usr/bin/python3',
@@ -49,7 +50,11 @@ api.ping = async (req, res, next) => {
     url: 'http://127.0.0.1:8080/api/v1/ping',
   }
   request(options, function (error, response) {
-    if (error) throw new Error(error)
+    if (error) {
+      log.error(error)
+      res.send({ status: 'no response', })
+      return
+    }
     log.debug(response.body)
     res.send(response.body)
   })
@@ -108,8 +113,8 @@ api.edge = async (req, res, next) => {
  */
 api.forcebuy = async (req, res, next) => {
   log.verbose('/api/forcebuy requested')
-  if (req.body.tradeId) {
-    res.send(await restClientCall('forcebuy', req.body.tradeId))
+  if (req.body.pair) {
+    res.send(await restClientCall('forcebuy', [req.body.pair, ]))
   } else {
     log.error('Bad request')
   }
@@ -124,8 +129,9 @@ api.forcebuy = async (req, res, next) => {
  */
 api.forcesell = async (req, res, next) => {
   log.verbose('/api/forcesell requested')
+  log.verbose(req.body)
   if (req.body.tradeId) {
-    res.send(await restClientCall('forcesell', req.body.tradeId))
+    res.send(await restClientCall('forcesell', [req.body.tradeId, ]))
   } else {
     log.error('Bad request')
   }
