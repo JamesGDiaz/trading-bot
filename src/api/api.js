@@ -11,20 +11,29 @@ const restClientCall = async (command, args = []) => {
     pythonOptions: ['-u', ], // get print results in real-time
     args: [command, ...args, ],
   }
-  return new Promise(resolve => {
-    PythonShell.run('./src/api/rest_client.py', options, function (err, results) {
+  return new Promise((resolve) => {
+    PythonShell.run('./src/api/rest_client.py', options, function (
+      err,
+      results
+    ) {
       if (err) {
         log.error(err)
         resolve(err)
       } else {
         // results is an array consisting of messages collected during execution
         log.debug(results[0])
-        resolve(JSON.parse(
-          results[0].replace(/'/g, '"')
-            .split('True').join('true')
-            .split('False').join('false')
-            .split('None').join('null')
-        ))
+        resolve(
+          JSON.parse(
+            results[0]
+              .replace(/'/g, '"')
+              .split('True')
+              .join('true')
+              .split('False')
+              .join('false')
+              .split('None')
+              .join('null')
+          )
+        )
       }
     })
   })
@@ -66,7 +75,7 @@ api.blacklist = async (req, res, next) => {
 
 /**
  * count
- * Return the amount of open trades.
+ * Displays number of trades used and available
  */
 api.count = async (req, res, next) => {
   log.verbose('/api/count requested')
@@ -79,7 +88,7 @@ api.count = async (req, res, next) => {
  */
 api.daily = async (req, res, next) => {
   log.verbose('/api/daily requested')
-  res.send(await restClientCall('daily'))
+  res.send(await restClientCall('daily', req.params.days))
 }
 
 /**
@@ -99,7 +108,12 @@ api.edge = async (req, res, next) => {
  */
 api.forcebuy = async (req, res, next) => {
   log.verbose('/api/forcebuy requested')
-  res.send(await restClientCall('forcebuy'))
+  if (req.body.tradeId) {
+    res.send(await restClientCall('forcebuy', req.body.tradeId))
+  } else {
+    log.error('Bad request')
+  }
+  res.status(400).end()
 }
 
 /**
@@ -110,7 +124,12 @@ api.forcebuy = async (req, res, next) => {
  */
 api.forcesell = async (req, res, next) => {
   log.verbose('/api/forcesell requested')
-  res.send(await restClientCall('forcesell'))
+  if (req.body.tradeId) {
+    res.send(await restClientCall('forcesell', req.body.tradeId))
+  } else {
+    log.error('Bad request')
+  }
+  res.status(400).end()
 }
 
 /**

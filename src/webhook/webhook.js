@@ -1,8 +1,8 @@
 'use strict'
 
-const { log } = require('../config')
-const { broadcastPushNotification } = require('../notifications/tokens')
-const { redisClient } = require('../redis')
+const { log, } = require('../config')
+const { broadcastPushNotification, } = require('../notifications/tokens')
+const { redisClient, } = require('../redis')
 
 const moment = require('moment')
 moment().format()
@@ -30,20 +30,20 @@ const sendNotification = async (messageType, value2 = {}) => {
       // log.verbose(`Token List: ${pushTokenList}`)
       let out = {}
       switch (messageType) {
-        case 'status':
-          out = statusNotifcationBuilder(value2)
-          break
-        case 'buy':
-        case 'buycancel':
-          out = buyNotificationBuilder(value2)
-          break
-        case 'sell':
-        case 'sellcancel':
-          out = sellNotificationBuilder(value2)
-          break
+      case 'status':
+        out = statusNotifcationBuilder(value2)
+        break
+      case 'buy':
+      case 'buycancel':
+        out = buyNotificationBuilder(value2)
+        break
+      case 'sell':
+      case 'sellcancel':
+        out = sellNotificationBuilder(value2)
+        break
 
-        default:
-          break
+      default:
+        break
       }
       // Only send push notifications while in production
       // if (process.env.NODE_ENV === 'production') { broadcastPushNotification(pushTokens, out.type, out.message) }
@@ -61,13 +61,13 @@ const sendNotification = async (messageType, value2 = {}) => {
 
 const statusNotifcationBuilder = (value2) => {
   if (value2 === 'running') {
-    return { title: 'Status: running', message: 'The bot is started' }
+    return { title: 'Status: running', message: 'The bot is started', }
   }
   if (value2.includes('*Exchange')) {
-    return { title: 'Configuration:', message: value2 }
+    return { title: 'Configuration:', message: value2, }
   }
   if (value2 === 'process died') {
-    return { title: 'ALERT', message: 'Process Died' }
+    return { title: 'ALERT', message: 'Process Died', }
   }
   return null
 }
@@ -117,4 +117,4 @@ const sellNotificationBuilder = (messageType, value2) => {
       `Order type: ${payload.order_type}`,
   }
 }
-module.exports = { webhook }
+module.exports = { webhook, }
