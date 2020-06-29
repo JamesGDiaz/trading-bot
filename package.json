@@ -7,7 +7,7 @@
     "lint": "./node_modules/.bin/eslint ./routes ./src ./app.js --fix",
     "test": "export NODE_ENV=test&& mocha --exit --reporter spec \"src/*/*.test.js\"",
     "dev": "export NODE_ENV=development && nodemon app.js -L --exec \"npm run test && npm run lint && node\"",
-    "start": "export NODE_ENV=production && pm2-runtime start app.js -i max",
+    "start": "export NODE_ENV=production && pm2 start app.js -i 1 -x --name 'trading-bot'",
     "stop": "pm2 stop all",
     "delete": "pm2 delete app"
   },
@@ -28,6 +28,7 @@
     "webpack-cli": "^3.3.11"
   },
   "dependencies": {
+    "axios": "^0.19.2",
     "body-parser": "^1.19.0",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
@@ -35,6 +36,7 @@
     "ejs": "^3.1.2",
     "expo-server-sdk": "^3.5.0",
     "express": "^4.17.1",
+    "express-basic-auth": "^1.2.0",
     "express-rate-limit": "^5.1.3",
     "express-session": "^1.17.1",
     "helmet": "^3.22.0",

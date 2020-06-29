@@ -23,7 +23,7 @@ router.post('/blacklist', api.blacklist)
 router.post('/stop', api.stop)
 router.post('/start', api.start)
 router.post('/stopbuy', api.stopbuy)
-router.post('/reload_conf', api.reload_conf)
+router.post('/reload_config', api.reload_conf)
 router.post('/forcebuy', api.forcebuy)
 router.post('/forcesell', api.forcesell)
 

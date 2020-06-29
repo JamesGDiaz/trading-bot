@@ -21,6 +21,7 @@ const listen = () => {
   const app = express.init()
   server = http.createServer(app).listen(config.port)
   log.info(`✓ Listening at http://${config.host}:${config.port}`)
+  log.info(`✓ Freqtrade is running at http://${config.freqtradeHost}:${config.freqtradePort}`)
   redis.init()
   routes.init(app)
   stats.memory()

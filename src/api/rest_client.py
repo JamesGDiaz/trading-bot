@@ -53,8 +53,7 @@ class FtRestClient():
         url = urlunparse((schema, netloc, path, par, query, fragment))
 
         try:
-            resp = self._session.request(
-                method, url, headers=hd, data=json.dumps(data))
+            resp = self._session.request(method, url, headers=hd, data=json.dumps(data))
             # return resp.text
             return resp.json()
         except ConnectionError:
@@ -81,18 +80,18 @@ class FtRestClient():
         return self._post("stop")
 
     def stopbuy(self):
-        """Stop buying (but handle sells gracefully). Use `reload_conf` to reset.
+        """Stop buying (but handle sells gracefully). Use `reload_config` to reset.
 
         :return: json object
         """
         return self._post("stopbuy")
 
-    def reload_conf(self):
+    def reload_config(self):
         """Reload configuration.
 
         :return: json object
         """
-        return self._post("reload_conf")
+        return self._post("reload_config")
 
     def balance(self):
         """Get the account balance.
@@ -224,7 +223,7 @@ def add_arguments():
                         dest='config',
                         type=str,
                         metavar='PATH',
-                        default='src/api/rest_client_config.json'
+                        default='config.json'
                         )
 
     parser.add_argument("command_arguments",
@@ -255,12 +254,12 @@ def print_commands():
     print("Possible commands:\n")
     for x, y in inspect.getmembers(client):
         if not x.startswith('_'):
-            doc = re.sub(':return:.*', '', getattr(client,
-                                                   x).__doc__, flags=re.MULTILINE).rstrip()
+            doc = re.sub(':return:.*', '', getattr(client, x).__doc__, flags=re.MULTILINE).rstrip()
             print(f"{x}\n\t{doc}\n")
 
 
 def main(args):
+
     if args.get("show"):
         print_commands()
         sys.exit()

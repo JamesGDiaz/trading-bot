@@ -21,10 +21,14 @@ const test = {
   env,
   host: process.env.HOST,
   port: process.env.PORT,
+  freqtradeHost: process.env.FREQTRADE_HOST,
+  freqtradePort: process.env.FREQTRADE_PORT,
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASS,
   xToken: process.env.XTOKEN,
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD,
 }
 
 /**
@@ -34,10 +38,14 @@ const development = {
   env,
   host: process.env.HOST,
   port: process.env.PORT,
+  freqtradeHost: process.env.FREQTRADE_HOST,
+  freqtradePort: process.env.FREQTRADE_PORT,
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASS,
   xToken: process.env.XTOKEN,
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD,
 }
 /**
  * Production config
@@ -46,10 +54,14 @@ const production = {
   env,
   host: process.env.HOST,
   port: process.env.PORT,
+  freqtradeHost: process.env.FREQTRADE_HOST,
+  freqtradePort: process.env.FREQTRADE_PORT,
   redisUrl: process.env.REDIS_URL,
   emailAddress: process.env.EMAIL_ADDRESS,
   emailPassword: process.env.EMAIL_PASS,
   xToken: process.env.XTOKEN,
+  username: process.env.USERNAME,
+  password: process.env.PASSWORD,
 }
 
 const config = {

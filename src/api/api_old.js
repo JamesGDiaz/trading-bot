@@ -1,41 +1,43 @@
 const { log, } = require('../config')
-const axios = require('axios').default
-const config = require('../config/').config
+const { PythonShell, } = require('python-shell')
+const request = require('request')
+// const config = require('../config/').config
 const api = {}
 
-const restClientCall = async (command, method = 'GET', params, data) => {
+const restClientCall = async (command, args = []) => {
+  const options = {
+    mode: 'text',
+    pythonPath: '/usr/bin/python3',
+    scriptPath: '/home/pi/trading-bot/src/api/',
+    pythonOptions: ['-u', ], // get print results in real-time
+    args: [command, ...args, ],
+  }
+  log.debug(JSON.stringify(options))
   return new Promise((resolve) => {
-    try {
-      axios({
-        method,
-        url: `http://${config.freqtradeHost}:${config.freqtradePort}/api/v1/` + command,
-        auth: {
-          username: config.username,
-          password: config.password,
-        },
-        params,
-        data,
-      })
-        .then((response) => {
-          console.log(response.data)
-          resolve(response.data)
-        })
-        .catch((error) => {
-          log.error(error)
-          resolve({
-            ok: false,
-            message:
-              'There was an error while making the request. Please try again or check the logs',
-          })
-        })
-    } catch (error) {
-      log.error(error)
-      return {
-        ok: false,
-        message:
-          'There was an error while making the request. Please try again or check the logs',
+    PythonShell.run('rest_client.py', options, function (
+      err,
+      results
+    ) {
+      if (err) {
+        log.error(JSON.stringify(err))
+        resolve(err)
+      } else {
+        // results is an array consisting of messages collected during execution
+        log.debug(results)
+        resolve(
+          JSON.parse(
+            results[0]
+              .replace(/'/g, '"')
+              .split('True')
+              .join('true')
+              .split('False')
+              .join('false')
+              .split('None')
+              .join('null')
+          )
+        )
       }
-    }
+    })
   })
 }
 
@@ -44,11 +46,18 @@ const restClientCall = async (command, method = 'GET', params, data) => {
  */
 api.ping = async (req, res, next) => {
   log.verbose('/api/ping requested')
-  axios({
+  var options = {
+    method: 'GET',
     url: 'http://127.0.0.1:8080/api/v1/ping',
-  }).then((response) => {
-    log.debug(response.data)
-    res.send(response.data)
+  }
+  request(options, function (error, response) {
+    if (error) {
+      log.error(error)
+      res.send({ status: 'no response', })
+      return
+    }
+    log.debug(response.body)
+    res.send(response.body)
   })
 }
 /**
@@ -57,7 +66,20 @@ api.ping = async (req, res, next) => {
  */
 api.balance = async (req, res, next) => {
   log.verbose('/api/balance requested')
-  res.send(await restClientCall('balance', req.method))
+  // res.send(await restClientCall('balance'))
+  var options = {
+    method: 'GET',
+    url: 'http://127.0.0.1:8080/api/v1/balance',
+  }
+  request(options, function (error, response) {
+    if (error) {
+      log.error(error)
+      res.send({ status: 'no response', })
+      return
+    }
+    log.debug(response.body)
+    res.send(response.body)
+  })
 }
 
 /**
@@ -67,7 +89,7 @@ api.balance = async (req, res, next) => {
  */
 api.blacklist = async (req, res, next) => {
   log.verbose('/api/blacklist requested')
-  res.send(await restClientCall('blacklist', req.method))
+  res.send(await restClientCall('blacklist'))
 }
 
 /**
@@ -76,7 +98,7 @@ api.blacklist = async (req, res, next) => {
  */
 api.count = async (req, res, next) => {
   log.verbose('/api/count requested')
-  res.send(await restClientCall('count', req.method))
+  res.send(await restClientCall('count'))
 }
 
 /**
@@ -85,11 +107,7 @@ api.count = async (req, res, next) => {
  */
 api.daily = async (req, res, next) => {
   log.verbose('/api/daily requested')
-  res.send(
-    await restClientCall('daily', req.method, {
-      timescale: req.query.timescale,
-    })
-  )
+  res.send(await restClientCall('daily', req.params.days))
 }
 
 /**
@@ -98,7 +116,7 @@ api.daily = async (req, res, next) => {
  */
 api.edge = async (req, res, next) => {
   log.verbose('/api/edge requested')
-  res.send(await restClientCall('edge', req.method))
+  res.send(await restClientCall('edge'))
 }
 
 /**
@@ -109,11 +127,8 @@ api.edge = async (req, res, next) => {
  */
 api.forcebuy = async (req, res, next) => {
   log.verbose('/api/forcebuy requested')
-  const { pair, price, } = req.body
-  if (pair) {
-    res.send(
-      await restClientCall('forcebuy', req.method, null, { pair, price, })
-    )
+  if (req.body.pair) {
+    res.send(await restClientCall('forcebuy', [req.body.pair, ]))
   } else {
     log.error('Bad request')
   }
@@ -128,13 +143,9 @@ api.forcebuy = async (req, res, next) => {
  */
 api.forcesell = async (req, res, next) => {
   log.verbose('/api/forcesell requested')
-  log.verbose(req.body.tradeId)
-  if (req.body.tradeId !== undefined) {
-    res.send(
-      await restClientCall('forcesell', req.method, null, {
-        tradeid: req.body.tradeId,
-      })
-    )
+  log.verbose(req.body)
+  if (req.body.tradeId) {
+    res.send(await restClientCall('forcesell', [req.body.tradeId, ]))
   } else {
     log.error('Bad request')
   }
@@ -147,7 +158,7 @@ api.forcesell = async (req, res, next) => {
  */
 api.performance = async (req, res, next) => {
   log.verbose('/api/performance requested')
-  res.send(await restClientCall('performance', req.method))
+  res.send(await restClientCall('performance'))
 }
 
 /**
@@ -156,7 +167,7 @@ api.performance = async (req, res, next) => {
  */
 api.profit = async (req, res, next) => {
   log.verbose('/api/profit requested')
-  res.send(await restClientCall('profit', req.method))
+  res.send(await restClientCall('profit'))
 }
 
 /**
@@ -164,8 +175,8 @@ api.profit = async (req, res, next) => {
  * Reload configuration.
  */
 api.reload_conf = async (req, res, next) => {
-  log.verbose('/api/reload_config requested')
-  res.send(await restClientCall('reload_config', req.method))
+  log.verbose('/api/reload_conf requested')
+  res.send(await restClientCall('reload_config'))
 }
 
 /**
@@ -174,7 +185,7 @@ api.reload_conf = async (req, res, next) => {
  */
 api.show_config = async (req, res, next) => {
   log.verbose('/api/show_config requested')
-  res.send(await restClientCall('show_config', req.method))
+  res.send(await restClientCall('show_config'))
 }
 
 /**
@@ -183,7 +194,7 @@ api.show_config = async (req, res, next) => {
  */
 api.start = async (req, res, next) => {
   log.verbose('/api/start requested')
-  res.send(await restClientCall('start', req.method))
+  res.send(await restClientCall('start'))
 }
 
 /**
@@ -192,7 +203,7 @@ api.start = async (req, res, next) => {
  */
 api.status = async (req, res, next) => {
   log.verbose('/api/status requested')
-  res.send(await restClientCall('status', req.method))
+  res.send(await restClientCall('status'))
 }
 
 /**
@@ -201,7 +212,7 @@ api.status = async (req, res, next) => {
  */
 api.stop = async (req, res, next) => {
   log.verbose('/api/stop requested')
-  res.send(await restClientCall('stop', req.method))
+  res.send(await restClientCall('stop'))
 }
 
 /**
@@ -210,7 +221,7 @@ api.stop = async (req, res, next) => {
  */
 api.stopbuy = async (req, res, next) => {
   log.verbose('/api/stopbuy requested')
-  res.send(await restClientCall('stopbuy', req.method))
+  res.send(await restClientCall('stopbuy'))
 }
 
 /**
