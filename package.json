@@ -41,7 +41,7 @@
     "express-session": "^1.17.1",
     "helmet": "^3.22.0",
     "http": "0.0.0",
-    "moment": "^2.25.1",
+    "moment": "^2.29.4",
     "nodemailer": "^6.4.6",
     "nodemailer-smtp-transport": "^2.7.4",
     "path": "^0.12.7",
